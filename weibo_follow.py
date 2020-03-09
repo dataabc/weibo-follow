@@ -10,8 +10,6 @@ import requests
 from lxml import etree
 from tqdm import tqdm
 
-from weiboSpider import Weibo
-
 
 class Follow(object):
     cookie = {'Cookie': 'your cookie'}  # 将your cookie替换成自己的cookie
@@ -21,7 +19,7 @@ class Follow(object):
         if not isinstance(user_id, int):
             sys.exit(u'user_id值应为一串数字形式,请重新输入')
         self.user_id = user_id
-        self.follow_list = []  # 存储爬取到的所有关注微博的user_id
+        self.follow_list = []  # 存储爬取到的所有关注微博的uri和用户昵称
 
     def deal_html(self, url):
         """处理html"""
@@ -46,14 +44,16 @@ class Follow(object):
 
     def get_one_page(self, page):
         """获取第page页的user_id"""
+        print(u'%s第%d页%s' % ('-' * 30, page, '-' * 30))
         url = 'https://weibo.cn/%d/follow?page=%d' % (self.user_id, page)
         selector = self.deal_html(url)
         table_list = selector.xpath('//table')
         for t in table_list:
             im = t.xpath('.//a/@href')[-1]
-            user_id = im[im.find('=') + 1:im.find('&')]
-            print(user_id)
-            self.follow_list.append(int(user_id))
+            uri = im[im.find('=') + 1:im.find('&')].split('/')[-1]
+            nickname = t.xpath('.//a/text()')[0]
+            print(u'%s %s' % (nickname, uri))
+            self.follow_list.append({'uri': uri, 'nickname': nickname})
 
     def get_follow_list(self):
         """获取关注用户主页地址"""
@@ -71,20 +71,20 @@ class Follow(object):
 
         print(u'用户关注列表爬取完毕')
 
+    def write_to_txt(self):
+        with open('user_id_list.txt', 'ab') as f:
+            for user in self.follow_list:
+                f.write((user['uri'] + ' ' + user['nickname'] + '\n').encode(
+                    sys.stdout.encoding))
+
 
 def main():
     try:
         # 爬取关注列表的user_id
-        user_id = 12345678  # 爬虫的user_id
+        user_id = 1669879400  # 爬虫的user_id
         fw = Follow(user_id)  # 调用Weibo类，创建微博实例wb
         fw.get_follow_list()  # 爬取微博信息
-
-        filter = 1  # 值为0表示爬取全部微博（原创微博+转发微博），值为1表示只爬取原创微博
-        pic_download = 0  # 值为0代表不下载微博原始图片,1代表下载微博原始图片
-        for user in fw.follow_list:
-
-            # 爬每个人的微博
-            Weibo(user, filter, pic_download).start()
+        fw.write_to_txt()
 
     except Exception as e:
         print('Error: ', e)
