@@ -1,4 +1,5 @@
-爬取一个或多个指定微博用户关注列表中微博账号的微博，批量获取其user_id，并写入user_id_list.txt。程序支持读文件，一个用户最多可以获取200个user_id，写入文件；然后可以用生成的user_id_list.txt作为config.json文件“user_id_list”参数的值，继续获取，生成文件，最多可以活动200X200=40000个use_id，以此类推，可以活动大量user_id。
+**爬取一个或多个指定微博用户关注列表中的微博账号，批量获取其user_id，并写入user_id_list.txt文件。**<br>
+程序支持读文件，一个用户最多可以获取200个user_id，写入user_id_list.txt文件；然后可以用生成的user_id_list.txt作为config.json文件“user_id_list”参数的值，继续获取user_id，生成文件，最多可以获得200X200=40000个use_id;然后又可以利用这40000个user_id获得40000X200=8000000个user_id，以此类推，可以获得大量user_id。
 
 ## 使用方法
 ### 获取程序
