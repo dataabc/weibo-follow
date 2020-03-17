@@ -84,7 +84,6 @@ class Follow(object):
         page_num = self.get_page_num()
         print(u'用户关注页数：' + str(page_num))
         page1 = 0
-        page_num = 3
         random_pages = random.randint(1, 5)
         for page in tqdm(range(1, page_num + 1), desc=u'关注列表爬取进度'):
             self.get_one_page(page)
