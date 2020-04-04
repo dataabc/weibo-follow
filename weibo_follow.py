@@ -73,7 +73,7 @@ class Follow(object):
         else:
             for t in table_list:
                 im = t.xpath('.//a/@href')[-1]
-                uri = im[im.find('=') + 1:im.find('&')].split('/')[-1]
+                uri = im.split('uid=')[-1].split('&')[0].split('/')[-1]
                 nickname = t.xpath('.//a/text()')[0]
                 if {'uri': uri, 'nickname': nickname} not in self.follow_list:
                     self.follow_list.append({'uri': uri, 'nickname': nickname})
