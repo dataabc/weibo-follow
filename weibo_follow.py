@@ -17,7 +17,7 @@ class Follow(object):
     def __init__(self, config):
         """Follow类初始化"""
         self.validate_config(config)
-        self.cookie = {'Cookie': config['cookie']}
+        self.cookie = config['cookie']
         user_id_list = config['user_id_list']
         if not isinstance(user_id_list, list):
             if not os.path.isabs(user_id_list):
@@ -44,7 +44,9 @@ class Follow(object):
     def deal_html(self, url):
         """处理html"""
         try:
-            html = requests.get(url, cookies=self.cookie).content
+            user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'
+            headers = {'User_Agent': user_agent, 'Cookie': self.cookie}
+            html = requests.get(url, headers=headers).content
             selector = etree.HTML(html)
             return selector
         except Exception as e:
